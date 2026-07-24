@@ -1,4 +1,3 @@
 # task
 
-hello harsh!
-hello harsh2!
+from readme.md file
