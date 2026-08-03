@@ -47,14 +47,3 @@ jobs:
           git commit -m "Sync Team development to Company development" || echo "No changes to commit"
           git pull --rebase origin development
           git push origin development
-
-
-      - name: Sync Development to Company Repository
-        env:
-          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
-
-        run: |
-          git remote remove company || true
-
-          git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
-          git push company development
