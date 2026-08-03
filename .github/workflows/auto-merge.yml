@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Configure Git
         run: |
@@ -24,7 +25,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Fetch All Branches
-        run: git fetch origin
+        run: |
+          git fetch origin
 
       - name: Merge Developer Branch into Development
         run: |
@@ -33,13 +35,22 @@ jobs:
           git merge origin/${{ github.ref_name }} --no-edit
           git push origin development
 
-     - name: Sync Development to Company Repository
-      env:
-        COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
-      run: |
-        git remote remove company || true
-        git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
+      - name: Check COMPANY_PAT
+        env:
+          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
+        run: |
+          if [ -z "$COMPANY_PAT" ]; then
+            echo "❌ COMPANY_PAT is EMPTY"
+            exit 1
+          else
+            echo "✅ COMPANY_PAT is Loaded"
+          fi
 
-        git fetch company
-
-       git push https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git development:development
+      - name: Sync Development to Company Repository
+        env:
+          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
+        run: |
+          git remote remove company || true
+          git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
+          git fetch company
+          git push https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git development:development
