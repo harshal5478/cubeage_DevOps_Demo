@@ -4,4 +4,6 @@ hello from developer
 
 Testing repository synchronization
 
-final test 
+final test for company check
+
+task 6 is working 
