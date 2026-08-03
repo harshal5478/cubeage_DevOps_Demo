@@ -20,26 +20,22 @@ jobs:
           COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
         run: |
           git clone https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git company-repo
-
       - name: Checkout Company development Branch
         run: |
           cd company-repo
           git fetch origin
           git checkout development
-
       - name: Sync Files
         run: |
           rsync -av --delete \
             --exclude=".git" \
             --exclude="company-repo" \
             ./ company-repo/
-
       - name: Configure Git
         run: |
           cd company-repo
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
       - name: Commit and Push
         run: |
           cd company-repo
