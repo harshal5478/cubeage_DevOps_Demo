@@ -33,12 +33,13 @@ jobs:
           git merge origin/${{ github.ref_name }} --no-edit
           git push origin development
 
-      - name: Sync Development to Company Repository
-        env:
-          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
-        run: |
-          git remote remove company || true
-          git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
+     - name: Sync Development to Company Repository
+      env:
+        COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
+      run: |
+        git remote remove company || true
+        git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
 
-          git fetch company
-          git push company development
+        git fetch company
+
+       git push https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git development:development
