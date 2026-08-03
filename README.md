@@ -1,3 +1,7 @@
 # task
 
-from readme.md file
+hello from developer 
+
+Testing repository synchronization
+
+final test for company check
