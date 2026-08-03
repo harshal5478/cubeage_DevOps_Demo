@@ -1,0 +1,49 @@
+name: Sync Team Development to Company
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  sync-company:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Team Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Clone Company Repository
+        env:
+          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
+        run: |
+          git clone https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git company-repo
+
+      - name: Checkout Company development Branch
+        run: |
+          cd company-repo
+          git fetch origin
+          git checkout development
+
+      - name: Sync Files
+        run: |
+          rsync -av --delete \
+            --exclude=".git" \
+            --exclude="company-repo" \
+            ./ company-repo/
+
+      - name: Configure Git
+        run: |
+          cd company-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and Push
+        run: |
+          cd company-repo
+          git add .
+          git commit -m "Sync Team development to Company development" || echo "No changes to commit"
+          git pull --rebase origin development
+          git push origin development
