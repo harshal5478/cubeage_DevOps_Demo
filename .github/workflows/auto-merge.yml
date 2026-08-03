@@ -1,40 +1,68 @@
-name: Auto Merge dev_harsh01 to Development
+name: Auto Merge and Sync to Company
 
 on:
   push:
     branches:
-      - dev_harsh01
+      - "dev_*"
 
 permissions:
   contents: write
 
 jobs:
-  merge-to-development:
+  merge-and-sync:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+
+      - name: Checkout Team Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
+
 
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Fetch Branches
+
+      - name: Fetch All Branches
         run: |
           git fetch origin
 
-      - name: Checkout Development Branch
-        run: |
-          git checkout development
 
-      - name: Merge dev_harsh01 into development
+      - name: Merge Developer Branch into Development
         run: |
-          git merge origin/dev_harsh01 --no-edit
+          git checkout -B development origin/development
+          git pull --rebase origin development
 
-      - name: Push Development Branch
-        run: |
+          if git merge --no-edit origin/${{ github.ref_name }}; then
+            echo "Merge completed successfully."
+          else
+            echo "Merge conflict detected."
+
+            echo "Keeping development branch version of workflow file."
+
+            git checkout --ours .github/workflows/auto-merge.yml || true
+
+            git add .github/workflows/auto-merge.yml
+
+            git commit -m "ci: auto resolve workflow conflict" || true
+
+            echo "Conflict resolved successfully."
+          fi
+
           git push origin development
+
+
+      - name: Sync Development to Company Repository
+        env:
+          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
+
+        run: |
+          git remote remove company || true
+
+          git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
+          git push company development
