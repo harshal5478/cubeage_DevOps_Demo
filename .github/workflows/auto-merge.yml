@@ -1,49 +1,40 @@
-name: Sync Team Development to Company
+name: Auto Merge dev_harsh01 to Development
 
 on:
   push:
     branches:
-      - development
+      - dev_harsh01
+
+permissions:
+  contents: write
 
 jobs:
-  sync-company:
+  merge-to-development:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Team Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Clone Company Repository
-        env:
-          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
-        run: |
-          git clone https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git company-repo
-
-      - name: Checkout Company development Branch
-        run: |
-          cd company-repo
-          git fetch origin
-          git checkout development
-
-      - name: Sync Files
-        run: |
-          rsync -av --delete \
-            --exclude=".git" \
-            --exclude="company-repo" \
-            ./ company-repo/
-
       - name: Configure Git
         run: |
-          cd company-repo
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit and Push
+      - name: Fetch Branches
         run: |
-          cd company-repo
-          git add .
-          git commit -m "Sync Team development to Company development" || echo "No changes to commit"
-          git pull --rebase origin development
+          git fetch origin
+
+      - name: Checkout Development Branch
+        run: |
+          git checkout development
+
+      - name: Merge dev_harsh01 into development
+        run: |
+          git merge origin/dev_harsh01 --no-edit
+
+      - name: Push Development Branch
+        run: |
           git push origin development
