@@ -34,4 +34,7 @@ jobs:
           git checkout development
           git pull origin development
           git merge origin/${{ github.ref_name }} --no-edit
+
+          git remote set-url origin https://${{ secrets.PAT_TOKEN }}@github.com/taskcubeage/cubeage_DevOps_Demo.git
+
           git push origin development
