@@ -1,7 +1,5 @@
-# task
+go to company repo 
+go to company repo 
+go to company repo 
 
-hello from developer 
 
-Testing repository synchronization
-
-final test for company check

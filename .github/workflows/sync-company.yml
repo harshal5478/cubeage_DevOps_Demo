@@ -1,0 +1,32 @@
+name: Sync Development to Company Repository
+
+on:
+  push:
+    branches:
+      - development
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Team Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Add Company Repository
+        run: |
+          git remote add company https://${{ secrets.COMPANY_TOKEN }}@github.com/harshal5478/cubeage_DevOps_Demo.git
+
+      - name: Push Development Branch to Company
+        run: |
+          git push company development:development --force
