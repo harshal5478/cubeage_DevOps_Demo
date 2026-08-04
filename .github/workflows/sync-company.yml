@@ -25,7 +25,7 @@ jobs:
 
       - name: Add Company Repository
         run: |
-          git remote add company https://${{ secrets.COMPANY_TOKEN }}@github.com/harshal5478/https://github.com/harshal5478/cubeage_DevOps_Demo.git
+          git remote add company https://${{ secrets.COMPANY_TOKEN }}@github.com/harshal5478/cubeage_DevOps_Demo.git
 
       - name: Push Development Branch to Company
         run: |
