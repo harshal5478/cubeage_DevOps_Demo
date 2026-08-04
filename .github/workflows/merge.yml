@@ -1,57 +1,34 @@
-name: Auto Merge dev_harsh01 to Development
+name: Auto Merge to Development
 
 on:
   push:
     branches:
       - dev_harsh01
+      - dev_harsh02
+      - dev_harsh03
 
 permissions:
   contents: write
 
 jobs:
-  merge-to-development:
+  merge:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Team Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Clone Company Repository
-        env:
-          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
-        run: |
-          git clone https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git company-repo
-      - name: Checkout Company development Branch
-        run: |
-          cd company-repo
-          git fetch origin
-          git checkout development
-      - name: Sync Files
-        run: |
-          rsync -av --delete \
-            --exclude=".git" \
-            --exclude="company-repo" \
-            ./ company-repo/
       - name: Configure Git
         run: |
-          cd company-repo
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Fetch Branches
+      - name: Merge into development
         run: |
           git fetch origin
-
-      - name: Checkout Development Branch
-        run: |
           git checkout development
-
-      - name: Merge dev_harsh01 into development
-        run: |
-          git merge origin/dev_harsh01 --no-edit
-
-      - name: Push Development Branch
-        run: |
+          git pull origin development
+          git merge origin/${{ github.ref_name }} --no-edit
           git push origin development
